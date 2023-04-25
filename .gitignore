@@ -64,6 +64,7 @@ venv.bak
 .spyderproject
 .spyproject
 cython_debug
+.python-version
 
 # Misc
 .vscode
