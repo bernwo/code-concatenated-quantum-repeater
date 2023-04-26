@@ -1,0 +1,2 @@
+netsquid-treecode==1.0.0
+netsquid==0.10.4
