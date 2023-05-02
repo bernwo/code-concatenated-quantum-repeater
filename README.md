@@ -10,7 +10,7 @@ To determine the probability that an error occurs on a logical tree-encoded qubi
 the python file `determine_reencoding_error_probability.py` can be used.
 This file depends on the netsquid snippet (a public library built on top of the quantum-network simulator NetSquid) called [NetSquid-TreeCode](https://gitlab.com/softwarequtech/netsquid-snippets/netsquid-treecode).
 For instructions on how to use and install it, see the [NetSquid website](https://netsquid.org/snippets/).
-The version of the snippet that was used to obtain the data used for the paper is 1.0.0.
+The version of the snippet that was used to obtain the data used for the paper is 1.0.1.
 Note that while all netsquid snippets are publicly available and open source, installing them (from the netsquid PyPi server) requires netsquid credentials (instructions on how to obtain these can be found on the page of the netsquid website linked above).
 These are the same credentials as those that are required to download and install NetSquid itself, or to access the NetSquid forum.
 
@@ -45,7 +45,7 @@ This loss probability is also included in the processed data.
 
 The data that was produced for the paper can be found in `processed_data_for_paper.csv`.
 A version of the data that has been manually reorganized, and also contains columns detailing the ratio between the physical error probability and the reencoding error probability, can be found in `processed_data_for_paper_reorganized.odt`.
-The raw data for the paper can be found at ... #FIXME.
+The raw data for the paper can be found using the DOI 10.4121/b9c7327e-97b2-4ea2-9b74-18c51f265027.
 The data was produced using `tree_channel_error_probability_parameters.csv` as included here as input csv file.
 The parameter values for which the simulations were performed as based on the cost-function optimization included in the paper.
 
