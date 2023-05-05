@@ -4,6 +4,8 @@ Code used to obtain the data for the published paper
 
 ## Determining the reencoding error probability
 
+_Note: This section applies to the folder `reencoding_error_probability/` in this repository._
+
 To determine the probability that an error occurs on a logical tree-encoded qubit given that there are loss channels and depolarizing channels on each of the lower-level qubits making it up,
 the python file `determine_reencoding_error_probability.py` can be used.
 This file depends on the netsquid snippet (a public library built on top of the quantum-network simulator NetSquid) called [NetSquid-TreeCode](https://gitlab.com/softwarequtech/netsquid-snippets/netsquid-treecode).
