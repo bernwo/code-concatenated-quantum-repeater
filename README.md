@@ -2,9 +2,7 @@
 
 Code used to obtain the data for the published paper
 
-
-Determining the reencoding error probability
---------------------------------------------
+## Determining the reencoding error probability
 
 To determine the probability that an error occurs on a logical tree-encoded qubit given that there are loss channels and depolarizing channels on each of the lower-level qubits making it up,
 the python file `determine_reencoding_error_probability.py` can be used.
@@ -50,4 +48,3 @@ The data was produced using `tree_channel_error_probability_parameters.csv` as i
 The parameter values for which the simulations were performed as based on the cost-function optimization included in the paper.
 
 For more details about determining the reencoding error probability as a function of the physical error probability, see Supplementary Section S3 of the paper.
-
