@@ -44,7 +44,7 @@ A loss probability is calculated from this assuming an attenuation length of 20 
 This loss probability is also included in the processed data.
 
 The data that was produced for the paper can be found in `processed_data_for_paper.csv`.
-A version of the data that has been manually reorganized, and also contains columns detailing the ratio between the physical error probability and the reencoding error probability, can be found in `processed_data_for_paper_reorganized.odt`.
+A version of the data that has been manually reorganized, and also contains columns detailing the ratio between the physical error probability and the reencoding error probability, can be found in `processed_data_for_paper_reorganized.ods`.
 The raw data for the paper can be found using the DOI 10.4121/b9c7327e-97b2-4ea2-9b74-18c51f265027.
 The data was produced using `tree_channel_error_probability_parameters.csv` as included here as input csv file.
 The parameter values for which the simulations were performed as based on the cost-function optimization included in the paper.
