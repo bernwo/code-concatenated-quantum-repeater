@@ -28,11 +28,19 @@ To generate effective errors for the 1-erasure error correction protocol, from t
 ./build/bin/main.exe 1erasure
 ```
 
-After running `main.exe`, you should see new files being written in `./binary_data/`, which is required by another binary to extrapolate the effective error for the entire network using the approximation derived via a recurrence relation as detailed in the supplemental material. The pre-generated files from running `./secret_key_rate/build/bin/main.exe` are available within this repository in `./secret_key_rate/binary_data/` for your convenience.
+After running `main.exe`, you should see new files being written in `./binary_data/`, which is required by another binary to extrapolate the effective error for the entire network using the approximation derived via a recurrence relation as detailed in the supplemental material. The pre-generated files from running `./secret_key_rate/build/bin/main.exe` are available within this repository in `./effective_error_probability/binary_data/` for your convenience.
 
 ## 🔑 Calculating the secret key rate with respect to minimized cost function
 
-Using the data generated in the previous [section](#calculating-effective-error-probability), we can minimize the cost function and thus calculate the corresponding secret key rate via `./secret_key_rate/Release/main.exe`.
+Using the data generated in the previous [section](#-calculating-effective-error-probability), we can minimize the cost function and thus calculate the corresponding secret key rate via `./secret_key_rate/build/Release/main.exe`. To build from source, go to `./secret_key_rate/` and run
+
+```sh
+cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release; cmake --build ./build --config Release;
+```
+
+For more information, run `./build/Release/main.exe --help`. Running `./build/Release/main.exe` results in data generated in `./binary_data`.
+
+For your convenience, pre-generated data are available in `./secret_key_rate/binary_data` in this repository. To convert these binary data to readable format and easy plotting, we use the Wolfram Mathematica notebook file `./secret_key_rate/post_processing.nb`, which outputs them into `./secret_key_rate/tex/`. Again for your convenience, the pre-converted files are available in `./secret_key_rate/tex/` in this repository.
 
 ## 🔍 Determining the re-encoding error probability
 
