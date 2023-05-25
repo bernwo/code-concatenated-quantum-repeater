@@ -2,9 +2,41 @@
 
 Code used to obtain the data for the published paper
 
-## Determining the reencoding error probability
+## 🧮 Calculating effective error probability
 
-_Note: This section applies to the folder `reencoding_error_probability/` in this repository._
+_Note: This section applies to the folder `./effective_error_probability/` in this repository._
+
+### Building the effective error probabilities for part of the network
+
+To calculate the secret key rate, which depends on the secret key fraction $f$. This is dependent on the effective error probability of the network, which is what we need to calculate.
+
+This is done via `main.exe`, which is available in `./effective_error_probability/build/bin/` upon building from source from the folder `./effective_error_probability/`. To build from source, run the command (tested on Windows with `MSVC`)
+
+```sh
+cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release; cmake --build ./build --config Release;
+```
+
+To generate effective errors for the fault-tolerant error correction protocol with flag qubit, from the `./effective_error_probability/` folder, run
+
+```sh
+./build/bin/main.exe flag
+```
+
+To generate effective errors for the 1-erasure error correction protocol, from the `./effective_error_probability/` folder, run
+
+```sh
+./build/bin/main.exe 1erasure
+```
+
+After running `main.exe`, you should see new files being written in `./binary_data/`, which is required by another binary to extrapolate the effective error for the entire network using the approximation derived via a recurrence relation as detailed in the supplemental material. The pre-generated files from running `./secret_key_rate/build/bin/main.exe` are available within this repository in `./secret_key_rate/binary_data/` for your convenience.
+
+## 🔑 Calculating the secret key rate with respect to minimized cost function
+
+Using the data generated in the previous [section](#calculating-effective-error-probability), we can minimize the cost function and thus calculate the corresponding secret key rate via `./secret_key_rate/Release/main.exe`.
+
+## 🔍 Determining the re-encoding error probability
+
+_Note: This section applies to the folder `./reencoding_error_probability/` in this repository._
 
 To determine the probability that an error occurs on a logical tree-encoded qubit given that there are loss channels and depolarizing channels on each of the lower-level qubits making it up,
 the python file `determine_reencoding_error_probability.py` can be used.
