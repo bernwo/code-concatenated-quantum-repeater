@@ -403,9 +403,9 @@ std::array<std::array<double, 16>, 16> FiveQubitCode::getCorrectionArrays() {
     std::array<std::array<double, 16>, 16> myAncillaKets;
     std::array<double, 16> ketH4 = FiveQubitCode::getKetH<4>();  // ket(+,+,+,+)
     std::array<double, 16> tempKetH4;
-    for (uint16_t i = 0; i < 16Ui16; i++) {
+    for (uint16_t i = 0; i < static_cast<uint16_t>(16); i++) {
         tempKetH4 = ketH4;
-        for (uint16_t j = 0; j < 4Ui16; j++) {
+        for (uint16_t j = 0; j < static_cast<uint16_t>(4); j++) {
             if (((i >> (3 - j)) & 0x01)) {
                 FastPauli::ketZ_r(tempKetH4.data(), 4, j);
             }

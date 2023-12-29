@@ -1,12 +1,21 @@
 #ifndef _REPEATERHPP_
 #define _REPEATERHPP_
-
 #include <boost/math/special_functions/binomial.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
-#include <format>
+#ifdef __APPLE__
+    #ifndef FMT_HEADER_ONLY
+        #define FMT_HEADER_ONLY
+    #endif
+    #include <fmt/core.h>  // Use `homebrew` and run `brew install fmt` on your terminal to install fmt. We have to use `fmt` instead because `std::format` is not supported by Apple's Clang.
+    #include <fmt/os.h>
+using fmt::format;
+#else
+    #include <format>
+using std::format;
+#endif
 #include <fstream>
 #include <tuple>
 #include <vector>
@@ -16,16 +25,16 @@
 
 namespace Repeater {
 struct RepeaterInfo {
-    double reencodingError; // Denoted as ϵ_r. It is the reencoding error rate.
-    int reencodingErrorFactor; // reencodingErrorFactor is such that ϵ_r = reencodingErrorFactor × ϵ_0, where ϵ_0 is the
-                               // depolarising error of each single qubit in the generated tree. ϵ_0 is also the error
-                               // rate of (non-teleported) spin-spin gates.
-    int teleportedErrorFactor; // teleportedErrorFactor is such that ϵ_tele = teleportedErrorFactor × ϵ_0, where ϵ_tele
-                               // is the error rate of the teleported spin-spin gates.
-    double Latt_val;   // Attenuation length.
-    double eta_d_val;  // Overall efficiency.
-    double tau_ph_val; // Single photon emission time.
-    double tau_ss_val; // Spin-spin gate time.
+    double reencodingError;     // Denoted as ϵ_r. It is the reencoding error rate.
+    int reencodingErrorFactor;  // reencodingErrorFactor is such that ϵ_r = reencodingErrorFactor × ϵ_0, where ϵ_0 is the
+                                // depolarising error of each single qubit in the generated tree. ϵ_0 is also the error
+                                // rate of (non-teleported) spin-spin gates.
+    int teleportedErrorFactor;  // teleportedErrorFactor is such that ϵ_tele = teleportedErrorFactor × ϵ_0, where ϵ_tele
+                                // is the error rate of the teleported spin-spin gates.
+    double Latt_val;            // Attenuation length.
+    double eta_d_val;           // Overall efficiency.
+    double tau_ph_val;          // Single photon emission time.
+    double tau_ss_val;          // Spin-spin gate time.
     std::vector<double> SKR;
     std::vector<double> cost;
     std::vector<double> L0;
@@ -54,7 +63,7 @@ struct RepeaterInfo {
         this->logicalError.resize(input_size);
         this->eta_e.resize(input_size);
         this->f_val.resize(input_size);
-        this->size        = input_size;
+        this->size = input_size;
         this->treeVecSize = eachTreeVecSize;
     }
     void save(std::string const &filename) const {
@@ -87,7 +96,7 @@ struct RepeaterInfo {
                 outfile_append.write((char *)this->eta_e.data(), this->eta_e.size() * sizeof(double));
                 outfile_append.write((char *)this->f_val.data(), this->f_val.size() * sizeof(double));
                 outfile_append.close();
-                std::cout << std::format(
+                std::cout << format(
                                  "\x1b[0;92mRepeater::RepeaterInfo - Data appended at \x1b[0m\x1b[1;4;92m{}!\x1b[0m",
                                  filename)
                           << std::endl;
@@ -119,14 +128,15 @@ struct RepeaterInfo {
                 outfile_append.write((char *)this->eta_e.data(), this->eta_e.size() * sizeof(double));
                 outfile_append.write((char *)this->f_val.data(), this->f_val.size() * sizeof(double));
                 outfile_append.close();
-                std::cout << std::format(
+                std::cout << format(
                                  "\x1b[0;92mRepeater::RepeaterInfo - File written at \x1b[0m\x1b[1;4;92m{}!\x1b[0m",
                                  filename)
                           << std::endl;
             } else {
-                std::cout << std::format("\x1b[0;93mRepeater::RepeaterInfo - File not written because the data for "
-                                         "this particular error rate exist already in \x1b[0m\x1b[1;4;93m{}!\x1b[0m",
-                                         filename)
+                std::cout << format(
+                                 "\x1b[0;93mRepeater::RepeaterInfo - File not written because the data for "
+                                 "this particular error rate exist already in \x1b[0m\x1b[1;4;93m{}!\x1b[0m",
+                                 filename)
                           << std::endl;
             }
         } else {
@@ -162,8 +172,8 @@ struct RepeaterInfo {
         inputfile.read(reinterpret_cast<char *>(&this->eta_e[0]), this->eta_e.size() * sizeof(double));
         inputfile.read(reinterpret_cast<char *>(&this->f_val[0]), this->f_val.size() * sizeof(double));
         inputfile.close();
-        std::cout << std::format("\x1b[0;92mRepeater::RepeaterInfo - File loaded from \x1b[0m\x1b[1;4;92m{}!\x1b[0m",
-                                 filename)
+        std::cout << format("\x1b[0;92mRepeater::RepeaterInfo - File loaded from \x1b[0m\x1b[1;4;92m{}!\x1b[0m",
+                            filename)
                   << std::endl;
     }
     bool doSKRCalculation(std::string const &filename) const {
@@ -174,7 +184,7 @@ struct RepeaterInfo {
         }
     }
 
-  private:
+   private:
     bool doAppend(std::string const &filename) const {
         double reencodingError_tmp;
         size_t L_points_tmp;
@@ -265,6 +275,6 @@ std::tuple<double, double, double, double> SKRHomogeneous(const double Ltot, con
                                                           std::vector<uint16_t> const &treeVec,
                                                           const double errReencoding);
 
-} // namespace Repeater
+}  // namespace Repeater
 
 #endif

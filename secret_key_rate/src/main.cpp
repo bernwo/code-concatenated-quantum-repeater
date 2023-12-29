@@ -4,7 +4,16 @@
 #include <cstdint>
 #include <cstdlib>  // Provides EXIT_SUCCESS
 #include <filesystem>
-#include <format>
+#ifdef __APPLE__
+    #ifndef FMT_HEADER_ONLY
+        #define FMT_HEADER_ONLY
+    #endif
+    #include <fmt/core.h>  // Use `homebrew` and run `brew install fmt` on your terminal to install fmt. We have to use `fmt` instead because `std::format` is not supported by Apple's Clang.
+using fmt::format;
+#else
+    #include <format>
+using std::format;
+#endif
 #include <iomanip>  // https://stackoverflow.com/questions/554063/how-do-i-print-a-double-value-with-full-precision-using-cout
 #include <iostream>
 #include <limits>
@@ -33,7 +42,7 @@ int main(int argc, const char *argv[]) {
 
     // Variables to declare immediately.
     const std::string data_path = "./binary_data/";
-    const std::string filename = std::format("{}latest.dat", data_path);
+    const std::string filename = format("{}latest.dat", data_path);
 
     constexpr double Latt_val = 20e3;      // Attenuation length.
     constexpr double eta_d_val = 0.95;     // Overall efficiency.
@@ -65,18 +74,18 @@ int main(int argc, const char *argv[]) {
 
     desc.add_options()("help,h", "Produce help message\n")(
         "L_points,l", boost::program_options::value<int>(&L_points)->default_value(21),
-        std::format("Number of data points between {:.2e} and {:.2e} kilometres, inclusive\n", L_min / 1e3, L_max / 1e3)
+        format("Number of data points between {:.2e} and {:.2e} kilometres, inclusive\n", L_min / 1e3, L_max / 1e3)
             .c_str())(
         "numTrees,n", boost::program_options::value<int>(&numTrees)->default_value(10),
         "The number of trees to be included from the tree vectors in the calculation of the secret key rate\n")(
         "kappa,k", boost::program_options::value<double>(&kappa)->default_value(1.0),
         "The relative cost between type i and type ii nodes\n")(
         "err_index,e", boost::program_options::value<size_t>(&err_index)->default_value(0),
-        std::format("The index of the `er_vals = [{:.0e},{:.0e},{:.0e},{:.0e},{:.0e}]` to perform secret key rate "
-                    "calculation on\n",
-                    er_vals[0], er_vals[1], er_vals[2], er_vals[3], er_vals[4])
+        format("The index of the `er_vals = [{:.0e},{:.0e},{:.0e},{:.0e},{:.0e}]` to perform secret key rate "
+               "calculation on\n",
+               er_vals[0], er_vals[1], er_vals[2], er_vals[3], er_vals[4])
             .c_str())("delete_data,d", boost::program_options::bool_switch(&delete_data)->default_value(false),
-                      std::format("Delete the file at {} if it exists.\n", filename).c_str())(
+                      format("Delete the file at {} if it exists.\n", filename).c_str())(
         "mode,m", boost::program_options::value<std::string>(&SKRMode)->default_value("hybrid"),
         "Whether to run the SKR calculation for the hybrid repeater protocol or the homogeneous repeater protocol. Can "
         "be either \"hybrid\" or \"homogeneous\".\n")(
@@ -106,7 +115,7 @@ int main(int argc, const char *argv[]) {
             std::cerr << "\x1b[0;91mError: The input err_index is too high!\x1b[0m\n";
             return EXIT_FAILURE;
         } else {
-            std::cout << std::format("Reencoding error chosen: {:.0e}", er_vals[err_index]) << std::endl;
+            std::cout << format("Reencoding error chosen: {:.0e}", er_vals[err_index]) << std::endl;
         }
     }
 
@@ -114,14 +123,14 @@ int main(int argc, const char *argv[]) {
 
     if (vm["delete_data"].as<bool>()) {
         // Reference: https://stackoverflow.com/questions/13799670/c-cin-only-boolean0-1
-        std::cout << std::format(
+        std::cout << format(
                          "\x1b[1;93mWarning\x1b[0m\x1b[0;93m: \x1b[0m\x1b[3;93mAre you sure you want to delete "
                          "\x1b[0m\x1b[4;93m{}\x1b[0m\x1b[0;93m? Please enter 0 or 1 only. 0 for keeping the "
                          "file and 1 for deleting the file. Your input:\x1b[0m",
                          filename)
                   << std::endl;
         while (!(std::cin >> delete_data)) {
-            std::cout << std::format(
+            std::cout << format(
                              "\x1b[1;93mWarning\x1b[0m\x1b[0;93m: \x1b[0m\x1b[3;93mAre you sure you want to "
                              "delete \x1b[0m\x1b[4;93m{}\x1b[0m\x1b[0;93m? Please enter 0 or 1 only. 0 for "
                              "keeping the file and 1 for deleting the file. Your input:\x1b[0m",
@@ -161,61 +170,61 @@ int main(int argc, const char *argv[]) {
                 std::cout << "\x1b[0;92mPath to the binary data exists!\x1b[0m" << std::endl;
             }
             ecFlagInfos[0].read(
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-26-59.dat",
-                            er_vals[0], reencodingErrorFactor, teleportedErrorFactor),
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo1_2023-03-05 20-26-59.dat",
-                            er_vals[0], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-26-59.dat",
+                       er_vals[0], reencodingErrorFactor, teleportedErrorFactor),
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo1_2023-03-05 20-26-59.dat",
+                       er_vals[0], reencodingErrorFactor, teleportedErrorFactor));
             ecFlagInfos[1].read(
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-17-13.dat",
-                            er_vals[1], reencodingErrorFactor, teleportedErrorFactor),
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo1_2023-03-05 20-17-13.dat",
-                            er_vals[1], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-17-13.dat",
+                       er_vals[1], reencodingErrorFactor, teleportedErrorFactor),
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo1_2023-03-05 20-17-13.dat",
+                       er_vals[1], reencodingErrorFactor, teleportedErrorFactor));
             ecFlagInfos[2].read(
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-06-53.dat",
-                            er_vals[2], reencodingErrorFactor, teleportedErrorFactor),
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo1_2023-03-05 20-06-53.dat",
-                            er_vals[2], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-06-53.dat",
+                       er_vals[2], reencodingErrorFactor, teleportedErrorFactor),
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo1_2023-03-05 20-06-53.dat",
+                       er_vals[2], reencodingErrorFactor, teleportedErrorFactor));
             ecFlagInfos[3].read(
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 19-57-33.dat",
-                            er_vals[3], reencodingErrorFactor, teleportedErrorFactor),
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo1_2023-03-05 19-57-33.dat",
-                            er_vals[3], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 19-57-33.dat",
+                       er_vals[3], reencodingErrorFactor, teleportedErrorFactor),
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo1_2023-03-05 19-57-33.dat",
+                       er_vals[3], reencodingErrorFactor, teleportedErrorFactor));
             ecFlagInfos[4].read(
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 19-33-57.dat",
-                            er_vals[4], reencodingErrorFactor, teleportedErrorFactor),
-                std::format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo1_2023-03-05 19-33-57.dat",
-                            er_vals[4], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 19-33-57.dat",
+                       er_vals[4], reencodingErrorFactor, teleportedErrorFactor),
+                format("../effective_error_probability/binary_data/flag_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo1_2023-03-05 19-33-57.dat",
+                       er_vals[4], reencodingErrorFactor, teleportedErrorFactor));
 
             ecErasureInfos[0].read(
-                std::format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-33-04.dat",
-                            er_vals[0], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-33-04.dat",
+                       er_vals[0], reencodingErrorFactor, teleportedErrorFactor));
             ecErasureInfos[1].read(
-                std::format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-32-09.dat",
-                            er_vals[1], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-32-09.dat",
+                       er_vals[1], reencodingErrorFactor, teleportedErrorFactor));
             ecErasureInfos[2].read(
-                std::format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-30-52.dat",
-                            er_vals[2], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-30-52.dat",
+                       er_vals[2], reencodingErrorFactor, teleportedErrorFactor));
             ecErasureInfos[3].read(
-                std::format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-29-28.dat",
-                            er_vals[3], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-29-28.dat",
+                       er_vals[3], reencodingErrorFactor, teleportedErrorFactor));
             ecErasureInfos[4].read(
-                std::format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
-                            "ecInfo0_2023-03-05 20-28-37.dat",
-                            er_vals[4], reencodingErrorFactor, teleportedErrorFactor));
+                format("../effective_error_probability/binary_data/1erasure_err{:.0e}_reencodingFactor{}_teleFactor{}/"
+                       "ecInfo0_2023-03-05 20-28-37.dat",
+                       er_vals[4], reencodingErrorFactor, teleportedErrorFactor));
 
             std::cout << "\x1b[0;92mBinary data has been read successfully\x1b[0m" << std::endl;
         } else {
@@ -406,7 +415,7 @@ int main(int argc, const char *argv[]) {
                 repeaterInfo.f_val[i] = std::numeric_limits<double>::quiet_NaN();
             }
             std::cout
-                << std::format(
+                << format(
                        "    \x1b[1;92m>\x1b[0m \x1b[1;3;97mSKR: {:10.3e}, \x1b[1;3;91mcost: {:10.3e}, \x1b[1;3;92mL0: "
                        "{:8.3f}, \x1b[1;3;93mntot: {:5d}, \x1b[1;3;94mc: {:5d}, \x1b[1;3;95mtree[{:2d}]: "
                        "[{:2d},{:2d},{:2d}], \x1b[1;3;96mfor L = {:9.3f} km  \x1b[0m\x1b[1;92m  ->  {:6.2f}%\x1b[0m",
@@ -420,7 +429,7 @@ int main(int argc, const char *argv[]) {
         repeaterInfo.save(filename);
     } else {
         std::cout
-            << std::format(
+            << format(
                    "     \x1b[1;92m>\x1b[0m \x1b[1;4;3;94mMain loop not executed. Data already exist for {:.0e}\x1b[0m",
                    er_vals[err_index])
             << std::endl;

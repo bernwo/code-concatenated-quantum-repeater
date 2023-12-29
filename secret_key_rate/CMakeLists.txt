@@ -25,10 +25,17 @@ set(USE_STATIC_BOOST TRUE)
 set(Boost_USE_STATIC_LIBS TRUE)
 find_package(Boost 1.82.0 COMPONENTS program_options REQUIRED)
 
+if (APPLE)
+  find_package(fmt) # brew install fmt
+  if(FMT_FOUND)
+    message(FATAL_ERROR "fmt not found!")
+  endif()
+endif()
+
 if(Boost_FOUND)
   file(GLOB SOURCESINFOLDER "src/*.cpp")
   file(GLOB HEADERSINFOLDER "include/*.hpp")
-  include_directories(app ${CMAKE_CURRENT_SOURCE_DIR} ${BOOST_INCLUDE_DIR} "./include" "../effective_error_probability/include")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${BOOST_INCLUDE_DIR} "./include" "../effective_error_probability/include")
   set(PROJECT_SOURCES
     ../effective_error_probability/src/AuxMath.cpp
     ${SOURCESINFOLDER}

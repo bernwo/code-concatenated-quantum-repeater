@@ -10,7 +10,7 @@ _Note: This section applies to the folder `./effective_error_probability/` in th
 
 To calculate the secret key rate, which depends on the secret key fraction $f$. This is dependent on the effective error probability of the network, which is what we need to calculate.
 
-This is done via `main.exe`, which is available in `./effective_error_probability/build/bin/` upon building from source from the folder `./effective_error_probability/`. To build from source, run the command (tested on Windows with `MSVC`)
+This is done via `main.exe`, which is available in `./effective_error_probability/build/bin/` upon building from source from the folder `./effective_error_probability/`. To build from source, run the command (tested on Windows with `MSVC` and on Macbook Air M2 with Apple's `Clang`)
 
 ```sh
 cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release; cmake --build ./build --config Release;
@@ -32,7 +32,7 @@ After running `main.exe`, you should see new files being written in `./binary_da
 
 ## 🔑 Calculating the secret key rate with respect to minimized cost function
 
-Using the data generated in the previous [section](#-calculating-effective-error-probability), we can minimize the cost function and thus calculate the corresponding secret key rate via `./secret_key_rate/build/Release/main.exe`. To build from source, go to `./secret_key_rate/` and run
+Using the data generated in the previous [section](#-calculating-effective-error-probability), we can minimize the cost function and thus calculate the corresponding secret key rate via `./secret_key_rate/build/Release/main.exe`. To build from source, go to `./secret_key_rate/` and run (tested on Windows with `MSVC` and on Macbook Air M2 with Apple's `Clang`)
 
 ```sh
 cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release; cmake --build ./build --config Release;
@@ -41,6 +41,11 @@ cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release; cmake --build ./build --config
 For more information, run `./build/Release/main.exe --help`. Running `./build/Release/main.exe` results in data generated in `./binary_data`.
 
 For your convenience, pre-generated data are available in `./secret_key_rate/binary_data` in this repository. To convert these binary data to readable format and easy plotting, we use the Wolfram Mathematica notebook file `./secret_key_rate/post_processing.nb`, which outputs them into `./secret_key_rate/tex/`. Again for your convenience, the pre-converted files are available in `./secret_key_rate/tex/` in this repository.
+
+#### Note for macOS
+
+- There won't be any extension in the resulting built binary, i.e., there is no `.exe` in the filename of the built binary.
+- For the dependencies, i.e., `boost` and `fmt`, please install them using `homebrew` with the commands `brew install boost`, `brew install boost-python3`, and `brew install fmt` before attempting to build.
 
 ## 🔍 Determining the re-encoding error probability
 
